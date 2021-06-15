@@ -49,7 +49,7 @@ This is an example of how to list things you need to use the software and how to
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/github_username/repo_name.git
+   git clone https://github.com/postmanlabs/api-spec-converter.git
    ```
 2. Install NPM packages
    ```sh

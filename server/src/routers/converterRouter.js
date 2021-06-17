@@ -10,14 +10,26 @@ router.use(express.json())
 
 var Converter = require('api-spec-converter')
 
-router.post('/converter/:format/:convertTo', cors(), upload.single('file'), async (req, res) => {
+router.post('/api/converter/:format/:type/:convertTo', upload.single('file'), async (req, res) => {
     var file = req.file,
-        {format, convertTo} = req.params,
+        {format, type, convertTo} = req.params,
         buffer = Buffer.from(file.buffer),
         origFile = buffer.toString()
 
     if(mapping[format] && mapping[format].includes(convertTo)) {
-        res.status(404).send({'result': 'error', 'message': 'Conversion mapping not found.', 'data': null})
+        if(type === 'yaml') {
+            origFile = JSON.stringify(YAML.parse(origFile))
+        }
+        Converter.convert({
+            from: format,
+            to: convertTo,
+            source: JSON.parse(origFile),
+        }, (err, result) => {
+            if(err) {
+                res.status(500).send({'result': 'error', 'message': err, 'data': null})
+            }
+            res.status(200).send({'result': 'success', 'message': `Conversion from ${format} to ${convertTo} was successful.` , 'data': result.stringify()})
+        })
     }
 
     else {
@@ -25,3 +37,5 @@ router.post('/converter/:format/:convertTo', cors(), upload.single('file'), asyn
     }
     
 })
+
+module.exports = router

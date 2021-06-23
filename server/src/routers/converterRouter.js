@@ -10,14 +10,14 @@ router.use(express.json())
 
 var Converter = require('api-spec-converter')
 
-router.post('/api/converter/:format/:type/:convertTo', upload.single('file'), async (req, res) => {
+router.post('/api/converter/:format/:intType/:convertTo/:outType', upload.single('file'), async (req, res) => {
     var file = req.file,
-        {format, type, convertTo} = req.params,
+        {format, inType, convertTo, outType} = req.params,
         buffer = Buffer.from(file.buffer),
-        origFile = buffer.toString()
-
+        origFile = buffer.toString(),
+        options = {syntax: 'yaml', order: 'openapi'}
     if(mapping[format] && mapping[format].includes(convertTo)) {
-        if(type === 'yaml') {
+        if(inType === 'yaml') {
             origFile = JSON.stringify(YAML.parse(origFile))
         }
         Converter.convert({
@@ -28,7 +28,7 @@ router.post('/api/converter/:format/:type/:convertTo', upload.single('file'), as
             if(err) {
                 res.status(500).send({'result': 'error', 'message': err, 'data': null})
             }
-            res.status(200).send({'result': 'success', 'message': `Conversion from ${format} to ${convertTo} was successful.` , 'data': result.stringify()})
+            res.status(200).send({'result': 'success', 'message': `Conversion from ${format} to ${convertTo} was successful.` , 'data': outType === 'yaml' ? result.stringify(options) : result})
         })
     }
 

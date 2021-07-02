@@ -9,7 +9,7 @@ router.use(express.json())
 
 var Converter = require('api-spec-converter')
 
-router.post('/converter/:format/:convertTo', upload.single('file'), async (req, res) => {
+router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
     var file = req.file,
         {format, convertTo} = req.params,
         buffer = Buffer.from(file.buffer),

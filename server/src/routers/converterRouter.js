@@ -12,8 +12,10 @@ var Converter = require('api-spec-converter')
 router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
     var file = req.file,
         {format, convertTo} = req.params,
+        {syntax} = req.query
         buffer = Buffer.from(file.buffer),
-        origFile = buffer.toString()
+        origFile = buffer.toString(),
+        options = {syntax: 'yaml', order: 'openapi'}
 
     if(mapping[format] && mapping[format].includes(convertTo)) {
       Converter.convert({
@@ -22,14 +24,14 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
           source: JSON.parse(origFile),
       }, (err, result) => {
           if(err) {
-              res.status(500).send({'result': 'error', 'message': err, 'data': null})
+              res.status(500).send({'message': err})
           }
-          res.status(200).send({'result': 'success', 'message': `Conversion from ${format} to ${convertTo} was successful.` , 'data': result.stringify()})
+          res.status(200).send({'spec': syntax === 'yaml' ? result.stringify(options) : result})
       })
     }
 
     else {
-        res.status(404).send({'result': 'error', 'message': 'Conversion mapping not found.', 'data': null})
+        res.status(404).send({'message': 'Conversion mapping not found.'})
     }
 
 }) 

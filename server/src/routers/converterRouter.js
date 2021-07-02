@@ -1,6 +1,8 @@
+const path = require('path')
 const express = require('express')
 const multer = require('multer')
 const upload = multer()
+const YAML = require('yamljs');
 const router = new express.Router()
 
 const { mapping } = require('../constants/config')
@@ -18,15 +20,23 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
         options = {syntax: 'yaml', order: 'openapi'}
 
     if(mapping[format] && mapping[format].includes(convertTo)) {
+      if(path.extname(file.originalname) === 'json') {
+        origFile = JSON.parse(origFile)
+      }
+      else {
+        origFile = YAML.parse(origFile)
+      }
       Converter.convert({
           from: format,
           to: convertTo,
-          source: JSON.parse(origFile),
+          source: origFile,
       }, (err, result) => {
           if(err) {
               res.status(500).send({'message': err})
           }
-          res.status(200).send({'spec': syntax === 'yaml' ? result.stringify(options) : result})
+          else {
+            res.status(200).send({'spec': syntax === 'yaml' ? result.stringify(options) : result})
+          }
       })
     }
 

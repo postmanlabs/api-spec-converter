@@ -1,3 +1,4 @@
+const fs = require('fs')
 const path = require('path')
 const express = require('express')
 const multer = require('multer')
@@ -14,7 +15,7 @@ var Converter = require('api-spec-converter')
 router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
     var file = req.file,
         {format, convertTo} = req.params,
-        {syntax} = req.query
+        {syntax, toFile} = req.query
         buffer = Buffer.from(file.buffer),
         origFile = buffer.toString(),
         options = {syntax: 'yaml', order: 'openapi'}
@@ -35,11 +36,17 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
               res.status(500).send({'message': err})
           }
           else {
-            res.status(200).send({'spec': syntax === 'yaml' ? result.stringify(options) : result})
+            result = syntax === 'yaml' ? result.stringify(options) : result
+            if(toFile) {
+              fs.writeFileSync(`./${path.parse(file.originalname).name}.${syntax}`, syntax === 'yaml' ? result : JSON.stringify(result))
+              res.status(200).sendFile(`${path.parse(file.originalname).name}.${syntax}`, {root : path.join(__dirname, '../../')})
+            }
+            else {
+              res.status(200).send(syntax === 'yaml' ? {'spec': result} : result)
+            }
           }
       })
     }
-
     else {
         res.status(404).send({'message': 'Conversion mapping not found.'})
     }

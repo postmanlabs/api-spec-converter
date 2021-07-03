@@ -4,7 +4,7 @@ const request = supertest(app)
 
 jest.setTimeout(30000)
 
-describe('POST /api/specification/:format/:convertTo', () => {
+describe('POST /api/specification/swagger_2/openapi_3', () => {
   //Swagger 2 (JSON) to OpenAPI 3 (JSON)
   it('should convert swagger_2 (json) to openapi_3 (json) ', async () => {
     const res = await request
@@ -40,7 +40,6 @@ describe('POST /api/specification/:format/:convertTo', () => {
       .attach('file', 'test/swagger_2/data/swagger_2.yaml')
       .query({'syntax': 'yaml'})
     expect(res.status).toBe(200)
-    console.log(res)
     expect(typeof res.body.spec).toBe('string')
   })
 })

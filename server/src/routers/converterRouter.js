@@ -3,7 +3,7 @@ const path = require('path')
 const express = require('express')
 const multer = require('multer')
 const upload = multer()
-const YAML = require('yamljs');
+const YAML = require('yamljs')
 const router = new express.Router()
 
 const { mapping } = require('../constants/config')
@@ -12,6 +12,7 @@ router.use(express.json())
 
 var Converter = require('api-spec-converter')
 
+//Endpoint for conversion
 router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
     var file = req.file,
         {format, convertTo} = req.params,
@@ -20,14 +21,18 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
         origFile = buffer.toString(),
         options = {syntax: 'yaml', order: 'openapi'}
 
+    // Check if the conversion is possible
     if(mapping[format] && mapping[format].includes(convertTo)) {
-      console.log(path.parse(file.originalname).ext)
+
+      //Parse JSON / YAML
       if(path.parse(file.originalname).ext === '.json') {
         origFile = JSON.parse(origFile)
       }
       else {
         origFile = YAML.parse(origFile)
       }
+
+      //Conversion using Lucy's Converter
       Converter.convert({
           from: format,
           to: convertTo,

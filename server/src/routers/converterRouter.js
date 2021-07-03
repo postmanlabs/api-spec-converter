@@ -21,7 +21,8 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
         options = {syntax: 'yaml', order: 'openapi'}
 
     if(mapping[format] && mapping[format].includes(convertTo)) {
-      if(path.extname(file.originalname) === 'json') {
+      console.log(path.parse(file.originalname).ext)
+      if(path.parse(file.originalname).ext === '.json') {
         origFile = JSON.parse(origFile)
       }
       else {

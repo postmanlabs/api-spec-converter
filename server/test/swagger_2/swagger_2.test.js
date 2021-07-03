@@ -34,7 +34,7 @@ describe('POST /api/specification/:format/:convertTo', () => {
   })
 
   //Swagger 2 (YAML) to OpenAPI 3 (YAML)
-  it('should convert swagger_2 (json) to openapi_3 (json) ', async () => {
+  it('should convert swagger_2 (yaml) to openapi_3 (yaml) ', async () => {
     const res = await request
       .post('/api/specification/swagger_2/openapi_3')
       .attach('file', 'test/swagger_2/data/swagger_2.yaml')

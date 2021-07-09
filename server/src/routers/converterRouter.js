@@ -48,7 +48,7 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
               res.status(200).sendFile(`${path.parse(file.originalname).name}.${syntax}`, {root : path.join(__dirname, '../../')})
             }
             else {
-              res.status(200).send(syntax === 'yaml' ? {'spec': result} : result)
+              res.status(200).send(syntax === 'yaml' ? {'spec': result} : JSON.stringify(result))
             }
           }
       })

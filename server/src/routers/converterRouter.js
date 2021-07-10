@@ -46,7 +46,6 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
             if(toFile) {
               fs.writeFileSync(`./${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}`, syntax === 'yaml' ? result : JSON.stringify(result))
               res.status(200).download(`${path.join(__dirname, '../../')}${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}`)
-              // , {root : path.join(__dirname, '../../')})
             }
             else {
               res.status(200).send(syntax === 'yaml' ? result : JSON.stringify(result.spec))

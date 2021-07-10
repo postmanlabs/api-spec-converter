@@ -47,7 +47,7 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
     expect(res.body).toEqual({})
   })
 
-  //Swagger 2 (JSON) to OpenAPI 3 (JSON) - JSON Response
+  //Swagger 2 (JSON) to OpenAPI 3 (JSON) - Download JSON Response
   it('should convert swagger_2 (json) to openapi_3 (json) and give json response', async () => {
     const res = await request
       .post('/api/specification/swagger_2/openapi_3')
@@ -55,9 +55,10 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
       .query({'toFile': true})
     expect(res.status).toBe(200)
     expect(res.headers['content-type']).toEqual('application/json; charset=UTF-8')
+    expect(res.headers['content-disposition']).toEqual('attachment; filename="swagger_2.json"')
   })
 
-  //Swagger 2 (JSON) to OpenAPI 3 (JSON) - YAML Response
+  //Swagger 2 (JSON) to OpenAPI 3 (JSON) - Download YAML Response
   it('should convert swagger_2 (json) to openapi_3 (yaml) and give json response', async () => {
     const res = await request
       .post('/api/specification/swagger_2/openapi_3')
@@ -65,5 +66,6 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
       .query({'syntax': 'yaml', 'toFile': true})
     expect(res.status).toBe(200)
     expect(res.headers['content-type']).toEqual('text/yaml; charset=UTF-8')
+    expect(res.headers['content-disposition']).toEqual('attachment; filename="swagger_2.yaml"')
   })
 })

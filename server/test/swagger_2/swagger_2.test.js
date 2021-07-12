@@ -48,7 +48,7 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
   })
 
   //Swagger 2 (JSON) to OpenAPI 3 (JSON) - Download JSON Response
-  it('should convert swagger_2 (json) to openapi_3 (json) and give json response', async () => {
+  it('should convert swagger_2 (json) to openapi_3 (json) and download json response', async () => {
     const res = await request
       .post('/api/specification/swagger_2/openapi_3')
       .attach('file', 'test/swagger_2/data/swagger_2.json')
@@ -59,7 +59,7 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
   })
 
   //Swagger 2 (JSON) to OpenAPI 3 (JSON) - Download YAML Response
-  it('should convert swagger_2 (json) to openapi_3 (yaml) and give json response', async () => {
+  it('should convert swagger_2 (json) to openapi_3 (yaml) and download yaml response', async () => {
     const res = await request
       .post('/api/specification/swagger_2/openapi_3')
       .attach('file', 'test/swagger_2/data/swagger_2.json')

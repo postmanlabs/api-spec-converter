@@ -27,7 +27,9 @@ function sendResponse(err, result, file, syntax, toFile, response) {
     if(toFile) {
       const fileName = `${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}` 
       fs.writeFileSync(`./${fileName}`, syntax === 'yaml' ? result : JSON.stringify(result))
-      response.status(200).download(`${path.join(__dirname, '../')}${fileName}`)
+      response.status(200).download(`${path.join(__dirname, '../')}${fileName}`, () => {
+        fs.unlinkSync(`./${fileName}`)
+      })
     }
     else {
       response.status(200).send(syntax === 'yaml' ? result : JSON.stringify(result.spec))

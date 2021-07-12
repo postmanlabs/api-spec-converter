@@ -14,22 +14,30 @@ var Converter = require('api-spec-converter')
 
 //Endpoint for conversion
 router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
-    var file = req.file,
-        {format, convertTo} = req.params,
-        {syntax, toFile} = req.query
-        buffer = Buffer.from(file.buffer),
-        origFile = buffer.toString(),
+    const {format, convertTo} = req.params,
+        {syntax = 'json', toFile = false} = req.query,
         options = {syntax: 'yaml', order: 'openapi'}
 
     // Check if the conversion is possible
     if(mapping[format] && mapping[format].includes(convertTo)) {
+      const file = req.file
+
+      if(!file) {
+        res.status(400).send({'message': 'File not available.'})
+      }
+
+      const fileExt = path.parse(file.originalname).ext
+      var origFile = Buffer.from(file.buffer).toString()
 
       //Parse JSON / YAML
-      if(path.parse(file.originalname).ext === '.json') {
+      if(fileExt === '.json') {
         origFile = JSON.parse(origFile)
       }
-      else {
+      else if(fileExt === '.yaml') {
         origFile = YAML.parse(origFile)
+      }
+      else {
+        res.status(400).send({'message': 'File extension not supported.'})
       }
 
       //Conversion using Lucy's Converter
@@ -44,8 +52,9 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
           else {
             result = syntax === 'yaml' ? result.stringify(options) : result
             if(toFile) {
-              fs.writeFileSync(`./${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}`, syntax === 'yaml' ? result : JSON.stringify(result))
-              res.status(200).download(`${path.join(__dirname, '../../')}${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}`)
+              const fileName = `${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}` 
+              fs.writeFileSync(`./${fileName}`, syntax === 'yaml' ? result : JSON.stringify(result))
+              res.status(200).download(`${path.join(__dirname, '../../')}${fileName}`)
             }
             else {
               res.status(200).send(syntax === 'yaml' ? result : JSON.stringify(result.spec))

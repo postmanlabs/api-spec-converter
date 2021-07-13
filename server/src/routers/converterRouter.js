@@ -1,52 +1,53 @@
-const path = require('path')
-const express = require('express')
-const multer = require('multer')
-const upload = multer()
-const router = new express.Router()
+const express = require('express');
+const multer = require('multer');
+const upload = multer();
+const router = new express.Router();
 
-const { mapping } = require('../constants/config')
-const { parseSpec, sendResponse } = require('../util')
+const { mapping } = require('../constants/config');
+const { parseInputFile, sendResponse } = require('../util');
 
-router.use(express.json())
+router.use(express.json());
 
-var Converter = require('api-spec-converter')
+var Converter = require('api-spec-converter');
 
 //Endpoint for conversion
 router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
     const {format, convertTo} = req.params,
-        {syntax = 'json', toFile = false} = req.query
+        {syntax = 'json', toFile = false} = req.query;
 
     // Check if the conversion is possible
     if(mapping[format] && mapping[format].includes(convertTo)) {
-      const file = req.file
+      const file = req.file;
 
       if(!file) {
-        res.status(400).send({'message': 'File not available.'})
+        res.status(400).send({'message': 'File not available.'});
       }
 
-      const fileExt = path.parse(file.originalname).ext
-      var origFile = Buffer.from(file.buffer).toString()
-
-      //Parse JSON / YAML
-      origFile = parseSpec(origFile, fileExt)
-      if(!origFile) {
-        res.status(400).send({'message': 'File extension not supported.'})
+      //Parse JSON / YAML Input String
+      parsedSpec = parseInputFile(file);
+      if(!parsedSpec) {
+        res.status(400).send({'message': 'File extension not supported.'});
       }
 
       //Conversion using Lucy's Converter
       Converter.convert({
           from: format,
           to: convertTo,
-          source: origFile,
+          source: parsedSpec,
       }, (err, result) => {
-          sendResponse(err, result, file, syntax, toFile, res)
-      })
+        if(err) {
+          response.status(500).send({'message': err});
+        }
+        else {
+          sendResponse(result, file, syntax, toFile, res);
+        }
+      });
     }
     else {
-        res.status(404).send({'message': 'Conversion mapping not found.'})
+        res.status(404).send({'message': 'Conversion mapping not found.'});
     }
 
-}) 
+}); 
 
 
-module.exports = router
+module.exports = router;

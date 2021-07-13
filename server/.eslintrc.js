@@ -11,9 +11,9 @@ module.exports = {
         'sourceType': 'module'
     },
     'rules': {
-        'semi': ['error', 'never'],
+        'semi': ['error', 'always'],
         'quotes': ['error', 'single'],
         'one-var-declaration-per-line': ['error', 'initializations'],
         'no-undef': 'off'
     }
-}
+};

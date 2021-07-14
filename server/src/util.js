@@ -1,5 +1,4 @@
 const YAML = require('yamljs');
-const fs = require('fs');
 const path = require('path');
 
 /**
@@ -37,10 +36,12 @@ function sendResponse(result, file, syntax, toFile, response) {
   result = syntax === 'yaml' ? result.stringify(options) : result;
   if(toFile) {
     const fileName = `${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}`; 
-    fs.writeFileSync(`./${fileName}`, syntax === 'yaml' ? result : JSON.stringify(result.spec));
-    response.status(200).download(`${path.join(__dirname, '../')}${fileName}`, () => {
-      fs.unlinkSync(`./${fileName}`);
-    });
+    const fileData = Buffer.from(syntax === 'yaml' ? result : JSON.stringify(result.spec))
+    response.writeHead(200, {
+      'Content-Disposition': `attachment; filename="${fileName}"`,
+      'Content-Type': syntax === 'yaml' ? 'text/yaml' : 'application/json'
+    })
+    response.end(fileData)
   }
   else {
     response.status(200).send(syntax === 'yaml' ? result : JSON.stringify(result.spec));

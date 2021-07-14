@@ -59,7 +59,7 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
       .attach('file', 'test/swagger_2/data/input/swagger_2.json')
       .query({'toFile': true});
     expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toEqual('application/json; charset=UTF-8');
+    expect(res.headers['content-type']).toEqual('application/json');
     expect(res.headers['content-disposition']).toEqual('attachment; filename="swagger_2.json"');
   });
 
@@ -70,7 +70,7 @@ describe('POST /api/specification/swagger_2/openapi_3', () => {
       .attach('file', 'test/swagger_2/data/input/swagger_2.json')
       .query({'syntax': 'yaml', 'toFile': true});
     expect(res.status).toBe(200);
-    expect(res.headers['content-type']).toEqual('text/yaml; charset=UTF-8');
+    expect(res.headers['content-type']).toEqual('text/yaml');
     expect(res.headers['content-disposition']).toEqual('attachment; filename="swagger_2.yaml"');
   });
 });

@@ -1,10 +1,10 @@
-const YAML = require('yamljs');
 const path = require('path');
+const fs = require('fs');
 
 /**
  * Parses the input specification
  * @param {object} file - The input file received as form-data
- * @returns {object} The JSON for the input specification
+ * @returns {object} The JSON for the input specification / the path to the input specification file
  */
 function parseInputFile(file) {
   const fileExt = path.parse(file.originalname).ext;
@@ -15,8 +15,9 @@ function parseInputFile(file) {
     return origFile;
   }
   else if(fileExt === '.yaml') {
-    origFile = YAML.parse(origFile);
-    return origFile;
+    const filePath = './input.yaml';
+    fs.writeFileSync(filePath, origFile);
+    return filePath;
   }
   else {
     return null;
@@ -31,20 +32,26 @@ function parseInputFile(file) {
  * @param {boolean} toFile - Whether the response should have the specification file as an attachment
  * @param {object} response - The response parameter received by the callback of the express endpoint
  */
-function sendResponse(result, file, syntax, toFile, response) {
-  const options = {syntax: 'yaml', order: 'openapi'};
-  result = syntax === 'yaml' ? result.stringify(options) : result;
+function sendResponse(result, file, targetSyntax, toFile, response) {
+  const options = {syntax: 'yaml', order: 'openapi'},
+    fileExt = path.parse(file.originalname).ext,
+    isYamlSyntax = targetSyntax === 'yaml';
+  result = isYamlSyntax ? result.stringify(options) : result;
   if(toFile) {
-    const fileName = `${path.parse(file.originalname).name}.${syntax ? syntax : 'json'}`; 
-    const fileData = Buffer.from(syntax === 'yaml' ? result : JSON.stringify(result.spec))
+    const fileName = `${path.parse(file.originalname).name}.${targetSyntax ? targetSyntax : 'json'}`,
+      fileData = Buffer.from(isYamlSyntax ? result : JSON.stringify(result.spec));
     response.writeHead(200, {
       'Content-Disposition': `attachment; filename="${fileName}"`,
-      'Content-Type': syntax === 'yaml' ? 'text/yaml' : 'application/json'
-    })
-    response.end(fileData)
+      'Content-Type': isYamlSyntax ? 'text/yaml; charset=UTF-8' : 'application/json; charset=UTF-8'
+    });
+    response.end(fileData, () => {
+      if(fileExt === '.yaml') {
+        fs.unlinkSync('./input.yaml');
+      }
+    });
   }
   else {
-    response.status(200).send(syntax === 'yaml' ? result : JSON.stringify(result.spec));
+    response.status(200).send(targetSyntax === 'yaml' ? result : JSON.stringify(result.spec));
   }
 }
 

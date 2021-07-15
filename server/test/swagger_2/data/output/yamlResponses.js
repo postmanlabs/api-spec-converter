@@ -2457,7 +2457,7 @@ components:
       type: oauth2
 externalDocs:
   url: 'https://buffer.com/developers/api'
-`
+`;
 
 const yamlResponse2 = 
 `openapi: 3.0.0
@@ -3121,9 +3121,9 @@ paths:
         Deletes a specified user for a specified database instance.
       operationId: deleteUser
       summary: Delete user
-`
+`;
 
 module.exports = {
   yamlResponse1,
   yamlResponse2,
-}
+};

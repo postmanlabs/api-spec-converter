@@ -13,7 +13,5 @@ module.exports = {
     'rules': {
         'semi': ['error', 'always'],
         'quotes': ['error', 'single'],
-        'one-var-declaration-per-line': ['error', 'initializations'],
-        'no-undef': 'off'
     }
 };

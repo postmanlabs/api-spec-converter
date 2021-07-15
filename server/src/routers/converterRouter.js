@@ -13,7 +13,7 @@ var Converter = require('api-spec-converter');
 //Endpoint for conversion
 router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
     const {format, convertTo} = req.params,
-        {syntax = 'json', toFile = false} = req.query;
+        {targetSyntax = 'json', toFile = false} = req.query;
 
     // Check if the conversion is possible
     if(mapping[format] && mapping[format].includes(convertTo)) {
@@ -24,7 +24,7 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
       }
 
       //Parse JSON / YAML Input String
-      parsedSpec = parseInputFile(file);
+      const parsedSpec = parseInputFile(file);
       if(!parsedSpec) {
         res.status(400).send({'message': 'File extension not supported.'});
       }
@@ -36,10 +36,10 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
           source: parsedSpec,
       }, (err, result) => {
         if(err) {
-          response.status(500).send({'message': err});
+          res.status(500).send({'message': err});
         }
         else {
-          sendResponse(result, file, syntax, toFile, res);
+          sendResponse(result, file, targetSyntax, toFile, res);
         }
       });
     }

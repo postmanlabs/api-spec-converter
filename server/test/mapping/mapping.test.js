@@ -8,7 +8,8 @@ describe('GET /api/specification/mapping', () => {
     const res = await request.get('/api/specification/mapping');
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
-      'swagger_2': ['openapi_3',]
+      'swagger_2': ['openapi_3',],
+      'api_blueprint': ['openapi_3',]
     });
   });
 }); 

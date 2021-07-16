@@ -1,0 +1,35 @@
+{
+  "openapi": "3.0.0",
+  "servers": [],
+  "info": {
+      "title": "The Simplest API",
+      "version": "",
+      "description": "This is one of the simplest APIs written in the **API Blueprint**. One plain\nresource combined with a method and that's it! We will explain what is going on\nin the next installment - \n[Resource and Actions](02.%20Resource%20and%20Actions.md).\n\n**Note:** As we progress through the examples, do not also forget to view the\n[Raw](https://raw.github.com/apiaryio/api-blueprint/master/examples/01.%20Simplest%20API.md)\ncode to see what is really going on in the API Blueprint, as opposed to just\nseeing the output of the Github Markdown parser.\n\nAlso please keep in mind that every single example in this course is a **real\nAPI Blueprint** and as such you can **parse** it with the \n[API Blueprint parser](https://github.com/apiaryio/drafter) or one of its\n[bindings](https://github.com/apiaryio/drafter#bindings).\n\n## API Blueprint\n\n+ [This: Raw API Blueprint](https://raw.github.com/apiaryio/api-blueprint/master/examples/01.%20Simplest%20API.md)\n\n+ [Next: Resource and Actions](02.%20Resource%20and%20Actions.md)"
+  },
+  "paths": {
+      "/message": {
+          "get": {
+              "responses": {
+                  "200": {
+                      "description": "OK",
+                      "headers": {},
+                      "content": {
+                          "text/plain": {
+                              "examples": {
+                                  "response": {
+                                      "value": "Hello World!\n"
+                                  }
+                              }
+                          }
+                      }
+                  }
+              },
+              "summary": "",
+              "operationId": "",
+              "description": "",
+              "tags": []
+          }
+      }
+  },
+  "tags": []
+}

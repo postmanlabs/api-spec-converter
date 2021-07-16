@@ -14,8 +14,8 @@ function parseInputFile(file) {
     origFile = JSON.parse(origFile);
     return origFile;
   }
-  else if(fileExt === '.yaml') {
-    const filePath = './input.yaml';
+  else if(['.yaml', '.apib'].includes(fileExt)) {
+    const filePath = `./input${fileExt}`;
     fs.writeFileSync(filePath, origFile);
     return filePath;
   }
@@ -45,8 +45,8 @@ function sendResponse(result, file, targetSyntax, toFile, response) {
       'Content-Type': isYamlSyntax ? 'text/yaml; charset=UTF-8' : 'application/json; charset=UTF-8'
     });
     response.end(fileData, () => {
-      if(fileExt === '.yaml') {
-        fs.unlinkSync('./input.yaml');
+      if(['.yaml', '.apib'].includes(fileExt)) {
+        fs.unlinkSync(`./input${fileExt}`);
       }
     });
   }

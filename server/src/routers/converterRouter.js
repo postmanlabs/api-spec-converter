@@ -11,7 +11,7 @@ router.use(express.json());
 var Converter = require('api-spec-converter');
 
 //Endpoint for conversion
-router.post('/api/specification/:format/:convertTo', upload.single('file'), async (req, res) => {
+router.post('/api/specification/:format/:convertTo', upload.single('file'), (req, res) => {
     const {format, convertTo} = req.params,
         {targetSyntax = 'json', toFile = false} = req.query;
 
@@ -26,7 +26,10 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
       //Parse JSON / YAML Input String
       const parsedSpec = parseInputFile(file);
       if(!parsedSpec) {
-        res.status(400).send({'message': 'File extension not supported.'});
+        return res.status(400).send({'message': 'File extension not available.'});
+      }
+      else if(parsedSpec === 'invalid') {
+        return res.status(400).send({'message': 'File extension not supported.'});
       }
 
       //Conversion using Lucy's Converter
@@ -36,7 +39,7 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
           source: parsedSpec,
       }, (err, result) => {
         if(err) {
-          res.status(500).send({'message': err});
+          return res.status(500).send({'message': err});
         }
         else {
           sendResponse(result, file, targetSyntax, toFile, res);
@@ -44,7 +47,7 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), asyn
       });
     }
     else {
-        res.status(404).send({'message': 'Conversion mapping not found.'});
+        return res.status(404).send({'message': 'Conversion mapping not found.'});
     }
 
 }); 

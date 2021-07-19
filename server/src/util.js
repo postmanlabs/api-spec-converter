@@ -2,14 +2,23 @@ const path = require('path');
 const fs = require('fs');
 
 /**
+ * Fetches the input file extension
+ * @param {object} file - The input file received as form-data
+ * @returns {string} The extension of the input file
+ */
+function getFileExtension(file) {
+  if(!file.originalname) return null;
+  return path.parse(file.originalname).ext;
+}
+
+/**
  * Parses the input specification
  * @param {object} file - The input file received as form-data
- * @returns {object} The JSON for the input specification / the path to the input specification file
+ * @returns {object|string} The JSON for the input specification / the path to the input specification file
  */
 function parseInputFile(file) {
-  const fileExt = path.parse(file.originalname).ext;
-  var origFile = Buffer.from(file.buffer).toString();
-
+  const fileExt = getFileExtension(file);
+  let origFile = Buffer.from(file.buffer).toString();
   if(fileExt === '.json') {
     origFile = JSON.parse(origFile);
     return origFile;
@@ -20,7 +29,7 @@ function parseInputFile(file) {
     return filePath;
   }
   else {
-    return null;
+    return fileExt ? 'invalid' : null;
   }
 }
 
@@ -31,10 +40,11 @@ function parseInputFile(file) {
  * @param {string} syntax - The expected syntax of the target specification
  * @param {boolean} toFile - Whether the response should have the specification file as an attachment
  * @param {object} response - The response parameter received by the callback of the express endpoint
- */
+ * @returns {object} - The response object that is sent to the client
+*/
 function sendResponse(result, file, targetSyntax, toFile, response) {
   const options = {syntax: 'yaml', order: 'openapi'},
-    fileExt = path.parse(file.originalname).ext,
+    fileExt = getFileExtension(file),
     isYamlSyntax = targetSyntax === 'yaml';
   result = isYamlSyntax ? result.stringify(options) : result;
   if(toFile) {
@@ -51,7 +61,7 @@ function sendResponse(result, file, targetSyntax, toFile, response) {
     });
   }
   else {
-    response.status(200).send(targetSyntax === 'yaml' ? result : JSON.stringify(result.spec));
+    return response.status(200).send(targetSyntax === 'yaml' ? result : JSON.stringify(result.spec));
   }
 }
 

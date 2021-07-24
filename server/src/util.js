@@ -1,5 +1,5 @@
 const path = require('path');
-const fs = require('fs');
+const YAML = require('yamljs');
 
 /**
  * Fetches the input file extension
@@ -14,7 +14,7 @@ function getFileExtension(file) {
 /**
  * Parses the input specification
  * @param {object} file - The input file received as form-data
- * @returns {object|string} The JSON for the input specification / the path to the input specification file
+ * @returns {object|string} The JSON for the input specification
  */
 function parseInputFile(file) {
   const fileExt = getFileExtension(file);
@@ -24,9 +24,8 @@ function parseInputFile(file) {
     return origFile;
   }
   else if(fileExt === '.yaml') {
-    const filePath = './input.yaml';
-    fs.writeFileSync(filePath, origFile);
-    return filePath;
+    origFile = YAML.parse(origFile);
+    return origFile;
   }
   else {
     return fileExt ? 'invalid' : null;
@@ -44,7 +43,6 @@ function parseInputFile(file) {
 */
 function sendResponse(result, file, targetSyntax, toFile, response) {
   const options = {syntax: 'yaml', order: 'openapi'},
-    fileExt = getFileExtension(file),
     isYamlSyntax = targetSyntax === 'yaml';
   result = isYamlSyntax ? result.stringify(options) : result;
   if(toFile) {
@@ -54,11 +52,7 @@ function sendResponse(result, file, targetSyntax, toFile, response) {
       'Content-Disposition': `attachment; filename="${fileName}"`,
       'Content-Type': isYamlSyntax ? 'text/yaml; charset=UTF-8' : 'application/json; charset=UTF-8'
     });
-    response.end(fileData, () => {
-      if(fileExt === '.yaml') {
-        fs.unlinkSync('./input.yaml');
-      }
-    });
+    response.end(fileData);
   }
   else {
     return response.status(200).send(targetSyntax === 'yaml' ? result : JSON.stringify(result.spec));

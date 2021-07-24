@@ -21,7 +21,4 @@ jobs:
         working-directory: server
       - run: npm run build --if-present
         working-directory: server
-      - run: npm test
-        working-directory: server
-      - run: ./node_modules/.bin/eslint .
-        working-directory: server
+      

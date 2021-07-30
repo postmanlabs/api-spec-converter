@@ -7,7 +7,6 @@ const jsonResponse1 = require('./data/output/jsonResponse1.json');
 const jsonResponse2 = require('./data/output/jsonResponse2.json');
 const { yamlResponse1, yamlResponse2 } = require('./data/output/yamlResponses');
 
-
 describe('POST /api/specification/swagger_2/openapi_3', () => {
   //Swagger 2 (JSON) to OpenAPI 3 (JSON)
   it('should convert swagger_2 (json) to openapi_3 (json)', (done) => {

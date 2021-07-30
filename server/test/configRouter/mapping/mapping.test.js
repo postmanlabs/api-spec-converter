@@ -2,7 +2,6 @@ const app = require('../../../app');
 const supertest = require('supertest');
 const request = supertest(app);
 
-// Mapping Config
 describe('GET /api/specification/mapping', () => {
   it('Should return all the possible conversion mappings as a JSON', async () => {
     const res = await request.get('/api/specification/mapping');

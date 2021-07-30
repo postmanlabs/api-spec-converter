@@ -19,6 +19,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
         working-directory: server
-      - run: npm run dev
-        working-directory: server
       

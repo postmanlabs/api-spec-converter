@@ -16,11 +16,14 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), (req
         {targetSyntax = 'json', toFile = false} = req.query;
 
     // Check if the conversion is possible
-    if(mapping[format] && mapping[format].includes(convertTo)) {
+    if(!(mapping[format] && mapping[format].includes(convertTo))) {
+      return res.status(404).send({'message': 'Conversion mapping not found.'});
+    }
+    else {
       const file = req.file;
 
       if(!file) {
-        res.status(400).send({'message': 'File not available.'});
+        return res.status(400).send({'message': 'File not available.'});
       }
 
       //Parse JSON / YAML Input String
@@ -41,15 +44,9 @@ router.post('/api/specification/:format/:convertTo', upload.single('file'), (req
         if(err) {
           return res.status(500).send({'message': err});
         }
-        else {
-          sendResponse(result, file, targetSyntax, toFile, res);
-        }
+        return sendResponse(result, file, targetSyntax, toFile, res);
       });
     }
-    else {
-        return res.status(404).send({'message': 'Conversion mapping not found.'});
-    }
-
 }); 
 
 

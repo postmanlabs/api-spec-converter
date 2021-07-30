@@ -29,15 +29,13 @@ function sendResponse(result, inputFile, targetSyntax, toFile, response) {
   if(!toFile) {
     return response.status(200).send(targetSyntax === 'yaml' ? result : JSON.stringify(result.spec));
   }
-  else {
-    const fileName = `${path.parse(inputFile.originalname).name}.${targetSyntax ? targetSyntax : 'json'}`,
-      fileData = Buffer.from(isYamlSyntax ? result : JSON.stringify(result.spec));
-    response.writeHead(200, {
-      'Content-Disposition': `attachment; filename="${fileName}"`,
-      'Content-Type': isYamlSyntax ? 'text/yaml; charset=UTF-8' : 'application/json; charset=UTF-8'
-    });
-    return response.end(fileData);
-  }
+  const fileName = `${path.parse(inputFile.originalname).name}.${targetSyntax ? targetSyntax : 'json'}`,
+    fileData = Buffer.from(isYamlSyntax ? result : JSON.stringify(result.spec));
+  response.writeHead(200, {
+    'Content-Disposition': `attachment; filename="${fileName}"`,
+    'Content-Type': isYamlSyntax ? 'text/yaml; charset=UTF-8' : 'application/json; charset=UTF-8'
+  });
+  return response.end(fileData);
 }
 
 module.exports = {

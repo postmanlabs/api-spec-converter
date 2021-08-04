@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "eslint": "./node_modules/.bin/eslint ."
   },
   "author": "",
   "license": "ISC",

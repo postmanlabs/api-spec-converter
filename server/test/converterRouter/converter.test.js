@@ -30,7 +30,7 @@ describe('POST /api/specification/invalid/openapi_3', () => {
   it('should return 400 for invalid file extension', (done) => {
     request
       .post('/api/specification/swagger_2/openapi_3')
-      .attach('file', 'test/common/data/test.raml')
+      .attach('file', 'test/converterRouter/data/test.raml')
       .end((err, res) => {
         if(err) throw err;
         expect(res.status).toBe(400);

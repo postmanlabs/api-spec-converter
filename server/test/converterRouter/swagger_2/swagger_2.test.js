@@ -3,9 +3,9 @@ const supertest = require('supertest');
 const app = require('../../../app');
 const request = supertest(app);
 
-const jsonResponse1 = require('./data/output/jsonResponse1.json');
-const jsonResponse2 = require('./data/output/jsonResponse2.json');
-const { yamlResponse1, yamlResponse2 } = require('./data/output/yamlResponses');
+const jsonResponse1 = require('./data/output/jsonResponse1.json'),
+  jsonResponse2 = require('./data/output/jsonResponse2.json'),
+  { yamlResponse1, yamlResponse2 } = require('./data/output/yamlResponses');
 
 describe('POST /api/specification/swagger_2/openapi_3', () => {
   //Swagger 2 (JSON) to OpenAPI 3 (JSON)

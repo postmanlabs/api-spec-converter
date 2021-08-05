@@ -22,7 +22,7 @@ describe('POST /api/specification/invalid/openapi_3', () => {
       .end((err, res) => {
         if(err) throw err;
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({'message': 'File not available.'});
+        expect(res.body).toEqual({'message': 'Input specification not available.'});
         done();
       });
   });

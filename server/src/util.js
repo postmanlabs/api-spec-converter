@@ -6,30 +6,17 @@ function getFileExtension(inputFile) {
   return path.parse(inputFile.originalname).ext;
 }
 
-function isJson(str) {
-  try {
-      JSON.parse(str);
-  } catch (e) {
-      return false;
-  }
-  return true;
-}
-
 function parseInput (inputFile) {
-  let syntax,
-    parsedFile;
+  let parsedFile;
   const validExtensions = ['json', 'yaml'];
 
   if(typeof inputFile === 'object') {
-    syntax = getFileExtension(inputFile).substring(1);
-    if(syntax) {
-      if (!validExtensions.includes(syntax)) return 'unsupported';
+    const fileExtension = getFileExtension(inputFile).substring(1);
+    if(fileExtension) {
+      if (!validExtensions.includes(fileExtension)) return 'unsupported';
     }
     else return null;
     inputFile = Buffer.from(inputFile.buffer).toString();
-  }
-  else {
-    syntax = isJson(inputFile) ? 'json' : 'yaml';
   }
 
   try {

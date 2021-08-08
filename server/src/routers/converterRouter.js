@@ -3,7 +3,7 @@ const multer = require('multer');
 const router = new express.Router();
 
 const { mapping } = require('../constants/config');
-const { parseInputFile, sendResponse } = require('../util');
+const { parseInput, sendResponse } = require('../util');
 
 router.use(express.json());
 
@@ -23,15 +23,17 @@ router.post('/api/specification/:format/:convertTo', (req, res) => {
     }
 
     if(mapping[format] && mapping[format].includes(convertTo)) {
-      const file = req.file;
-      var input = file ? file : req.body;
-
-      const parsedSpec = parseInputFile(input);
+      const file = req.file,
+        input = file ? file : req.body,
+        parsedSpec = parseInput(input);
       if(!parsedSpec) {
         return res.status(400).send({'message': 'File extension not available.'});
       }
-      else if(parsedSpec === 'invalid') {
+      else if(parsedSpec === 'unsupported') {
         return res.status(400).send({'message': 'File extension not supported.'});
+      }
+      else if(parsedSpec === 'invalid') {
+        return res.status(400).send({'message': 'Invalid input specification syntax.'});
       }
 
       Converter.convert({

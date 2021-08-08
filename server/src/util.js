@@ -15,27 +15,35 @@ function isJson(str) {
   return true;
 }
 
-function parseInputFile(inputFile) {
-  let syntax;
+function parseInput (inputFile) {
+  let syntax,
+    parsedFile;
+  const validExtensions = ['json', 'yaml'];
+
   if(typeof inputFile === 'object') {
     syntax = getFileExtension(inputFile).substring(1);
+    if(syntax) {
+      if (!validExtensions.includes(syntax)) return 'unsupported';
+    }
+    else return null;
     inputFile = Buffer.from(inputFile.buffer).toString();
   }
   else {
     syntax = isJson(inputFile) ? 'json' : 'yaml';
   }
-  
-  if(syntax === 'json') {
-    inputFile = JSON.parse(inputFile);
-    return inputFile;
+
+  try {
+    parsedFile = JSON.parse(inputFile);
   }
-  else if(syntax === 'yaml') {
-    inputFile = YAML.parse(inputFile);
-    return inputFile;
+  catch(e) {
+    try {
+      parsedFile = YAML.parse(inputFile);
+    }
+    catch(e) {
+      return 'invalid';
+    }
   }
-  else {
-    return syntax ? 'invalid' : null;
-  }
+  return parsedFile;
 }
 
 function sendResponse(result, inputFile, targetSyntax, toFile, response, format, convertTo) {
@@ -63,6 +71,6 @@ function sendResponse(result, inputFile, targetSyntax, toFile, response, format,
 }
 
 module.exports = {
-  parseInputFile,
+  parseInput,
   sendResponse
 };

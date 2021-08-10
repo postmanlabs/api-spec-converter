@@ -1,14 +1,13 @@
 const express = require('express');
 const multer = require('multer');
-const router = new express.Router();
+const _ = require('lodash');
+const Converter = require('api-spec-converter');
 
 const { mapping } = require('../constants/config');
 const { parseInput, sendResponse } = require('../util');
 
-router.use(express.json());
-
-var Converter = require('api-spec-converter');
-var upload = multer().single('file');
+const router = new express.Router(),
+  upload = multer().single('file');
 
 router.post('/api/specification/:format/:convertTo', (req, res) => {
   const {format, convertTo} = req.params,
@@ -18,7 +17,7 @@ router.post('/api/specification/:format/:convertTo', (req, res) => {
     if (req.fileValidationError) {
       return res.status(500).send({'message': req.fileValidationError});
     }
-    else if (!req.file && ((typeof req.body === 'string' && req.body === '') || (typeof req.body === 'object' && Object.keys(req.body).length === 0))) {
+    else if (!req.file && _.isEmpty(req.body)) {
       return res.status(400).send({'message': 'Input specification not available.'});
     }
 

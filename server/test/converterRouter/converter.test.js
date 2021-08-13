@@ -22,12 +22,12 @@ describe('POST /api/specification/invalid/openapi_3', () => {
       .end((err, res) => {
         if(err) throw err;
         expect(res.status).toBe(400);
-        expect(res.body).toEqual({'message': 'File not available.'});
+        expect(res.body).toEqual({'message': 'Input specification not available.'});
         done();
       });
   });
 
-  it('should return 400 for invalid file extension', (done) => {
+  it('should return 400 for unsupported file extension', (done) => {
     request
       .post('/api/specification/swagger_2/openapi_3')
       .attach('file', 'test/converterRouter/data/test.raml')
@@ -35,6 +35,18 @@ describe('POST /api/specification/invalid/openapi_3', () => {
         if(err) throw err;
         expect(res.status).toBe(400);
         expect(res.body).toEqual({'message': 'File extension not supported.'});
+        done();
+      });
+  });
+
+  it('should return 400 for invalid input specification syntax', (done) => {
+    request
+      .post('/api/specification/swagger_2/openapi_3')
+      .attach('file', 'test/converterRouter/data/swagger_2_invalid.json')
+      .end((err, res) => {
+        if(err) throw err;
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({'message': 'Invalid input specification syntax.'});
         done();
       });
   });
